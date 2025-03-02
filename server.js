@@ -153,6 +153,6 @@ function startTimer() {
 
 // Start the server listening on localhost:8080
 server.listen(PORT, () => {
-  console.log(`Listening on: http://192.168.1.62:${server.address().port}`)
+  console.log(`Listening on: http://localhost${server.address().port}`)
 })
 

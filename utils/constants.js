@@ -1,6 +1,6 @@
 const PORT = 3000
 const MAX_TIME = 30
-const HANDS_BURNED = 2
+const HANDS_BURNED = 5
 const CLIENT = {
   MESSAGE: {
     NEW_USER: 'NEW_USER',

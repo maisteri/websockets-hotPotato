@@ -13,6 +13,7 @@ const { PORT, MAX_TIME, CLIENT, SERVER } = CONSTANTS
 
 // Application Variables;
 let nextPlayerIndex = 0
+let gameClock = null
 
 ///////////////////////////////////////////////
 ///////////// HTTP SERVER LOGIC ///////////////
@@ -54,6 +55,9 @@ wsServer.on('connection', (socket) => {
         break
       case CLIENT.MESSAGE.PASS_POTATO:
         passThePotatoTo(payload.newPotatoHolderIndex)
+        break
+      case CLIENT.MESSAGE.HANDS_BURNED:
+        endGame()
         break
       default:
         console.log('Unknown message type:', type)
@@ -121,12 +125,20 @@ function passThePotatoTo(newPotatoHolderIndex) {
   // TODO: Broadcast a NEW_POTATO_HOLDER message with the newPotatoHolderIndex
 }
 
+function endGame() {
+  clearInterval(gameClock) // stop the timer
+  nextPlayerIndex = 0 // reset the players index
+  broadcast({
+    type: SERVER.BROADCAST.GAME_OVER,
+  })
+}
+
 function startTimer() {
   // Set the clock to start at MAX_TIME (30)
   let clockValue = MAX_TIME
 
   // Start the clock ticking
-  const interval = setInterval(() => {
+  gameClock = setInterval(() => {
     if (clockValue > 0) {
       // TODO: broadcast 'COUNTDOWN' with the clockValue
       broadcast({
@@ -140,13 +152,7 @@ function startTimer() {
 
     // At 0...
     else {
-      clearInterval(interval) // stop the timer
-      nextPlayerIndex = 0 // reset the players index
-
-      // TODO: Broadcast 'GAME_OVER'
-      broadcast({
-        type: SERVER.BROADCAST.GAME_OVER,
-      })
+      endGame()
     }
   }, 1000)
 }

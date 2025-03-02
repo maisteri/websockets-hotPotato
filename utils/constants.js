@@ -1,9 +1,11 @@
 const PORT = 3000
 const MAX_TIME = 30
+const HANDS_BURNED = 2
 const CLIENT = {
   MESSAGE: {
     NEW_USER: 'NEW_USER',
     PASS_POTATO: 'PASS_POTATO',
+    HANDS_BURNED: 'HANDS_BURNED',
   },
 }
 const SERVER = {
@@ -23,7 +25,9 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = exports = {
     PORT,
     MAX_TIME,
+    HANDS_BURNED,
     CLIENT,
     SERVER,
   }
 }
+

@@ -29,7 +29,8 @@
     let wsClient = null;            // The client-side WebSocket connection variable: new WebSocket() 
     let clientPlayerIndex = null;   // The index value of the client: 0 | 1 | 2 | 3
     let potatoHolderIndex = null;   // The index value of the current holder of the potato: 0 | 1 | 2 | 3
-    
+    let timer = null;               // The timer variable for 1s potato clock
+
     ////////////////////////////////////////////////
     //////////// DOM SETUP /////////////////////////
     ////////////////////////////////////////////////
@@ -61,6 +62,7 @@
       }
       // TODO: Create a new WebSocket connection with the server using the ws protocol
       const URL = 'wss://websockets-hotpotato.onrender.com'
+      // const URL = 'ws://localhost:3000';
       wsClient = new WebSocket(URL);
 
       // TODO: Define the .onopen() handler
@@ -126,8 +128,9 @@
           newPotatoHolderIndex
         }
       }
+      console.log('Timer cleared', timer);
+      clearTimeout(timer);
       wsClient.send(JSON.stringify(message));
-
       potatoHolderIndex = newPotatoHolderIndex;
       
       // TODO: Send the server a 'PASS_POTATO' message with the newPotatoHolderIndex
@@ -162,6 +165,19 @@
     // Updates the potatoHolderIndex value and sets each playerAvatar image to either be "HOT" or "COLD" accordingly
     function updateCurrentPotatoHolder(newPotatoHolderIndex) {
       // remove the hasPotato class from any existing elements that have it
+      if (clientPlayerIndex === newPotatoHolderIndex) {
+        timer = setTimeout(() => {
+          endGame();
+          const message = {
+            type: CLIENT.MESSAGE.HANDS_BURNED,
+            payload: {
+              clientPlayerIndex
+            }
+          }
+          wsClient.send(JSON.stringify(message));
+        }, HANDS_BURNED * 1000);
+        console.log('Timer created', timer);
+      }
       potatoHolderIndex = newPotatoHolderIndex;
       playerElements.forEach((playerElement, i) => {
         const playerAvatar = playerElement.childNodes[0];
